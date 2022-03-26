@@ -1,23 +1,42 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { useState } from "react";
+import "./App.css";
 
 function App() {
+  const [randomBook, setRandomBook] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  function handleClick() {
+    setRandomBook("");
+    setLoading(true);
+    fetch("/random")
+      .then((res) => res.json())
+      .then((data) => {
+        setRandomBook(data);
+        setLoading(false);
+      });
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {/* {data &&
+        data.map((book) => {
+          return <p>{book.title}</p>;
+        })} */}
+      <h1>Random Book</h1>
+      <button onClick={handleClick}>Generate</button>
+      <p>{loading ? "Loading..." : ""}</p>
+      {randomBook && (
+        <div>
+          <img src={randomBook.bookCover} alt="book cover" />
+          <p>{randomBook.title}</p>
+          <p>{randomBook.author}</p>
+          <p>
+            Description:{" "}
+            {!randomBook ? "Retrieving book..." : randomBook.description}
+          </p>
+        </div>
+      )}
     </div>
   );
 }
