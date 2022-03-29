@@ -1,21 +1,34 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
 
 function App() {
   const [randomBook, setRandomBook] = useState("");
   const [loading, setLoading] = useState(false);
+  const [genresList, setGenresList] = useState([]);
+  const [genre, setGenre] = useState("");
 
-  function handleClick() {
+  function handleSubmit(e) {
+    e.preventDefault();
     setRandomBook("");
     setLoading(true);
-    fetch("/random")
+    fetch(`/random/${genre}`)
       .then((res) => res.json())
       .then((data) => {
         setRandomBook(data);
         setLoading(false);
       });
   }
+
+  function handleChange(e) {
+    setGenre(e.target.value);
+  }
+
+  useEffect(() => {
+    fetch("/genres")
+      .then((response) => response.json())
+      .then((data) => setGenresList(data.genres.sort()));
+  }, []);
 
   return (
     <div className="App">
@@ -24,7 +37,15 @@ function App() {
           return <p>{book.title}</p>;
         })} */}
       <h1>Random Book</h1>
-      <button onClick={handleClick}>Generate</button>
+      <form onSubmit={handleSubmit}>
+        <label>Genre:</label>
+        <select onChange={handleChange}>
+          {genresList?.map((genre) => {
+            return <option value={genre}>{genre}</option>;
+          })}
+        </select>
+        <input type="submit" value="Submit" />
+      </form>
       <p>{loading ? "Loading..." : ""}</p>
       {randomBook && (
         <div>
@@ -33,7 +54,7 @@ function App() {
           <p>{randomBook.author}</p>
           <p>
             Description:{" "}
-            {!randomBook ? "Retrieving book..." : randomBook.description}
+            {randomBook.description ? randomBook.description : "Not available."}
           </p>
         </div>
       )}
