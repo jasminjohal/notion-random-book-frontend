@@ -1,6 +1,7 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import "./App.css";
+import Loading from "./Loading";
 
 function App() {
   const [randomBook, setRandomBook] = useState("");
@@ -12,12 +13,21 @@ function App() {
     e.preventDefault();
     setRandomBook("");
     setLoading(true);
-    fetch(`/random/${genre}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setRandomBook(data);
-        setLoading(false);
-      });
+    if (genre === "Any") {
+      fetch("/random")
+        .then((res) => res.json())
+        .then((data) => {
+          setRandomBook(data);
+          setLoading(false);
+        });
+    } else {
+      fetch(`/random/${genre}`)
+        .then((res) => res.json())
+        .then((data) => {
+          setRandomBook(data);
+          setLoading(false);
+        });
+    }
   }
 
   function handleChange(e) {
@@ -32,32 +42,41 @@ function App() {
 
   return (
     <div className="App">
-      {/* {data &&
-        data.map((book) => {
-          return <p>{book.title}</p>;
-        })} */}
-      <h1>Random Book</h1>
+      <h1>Random Book Generator</h1>
+
       <form onSubmit={handleSubmit}>
-        <label>Genre:</label>
+        <label>Genre: </label>
         <select onChange={handleChange}>
+          <option value="Any">Any</option>
           {genresList?.map((genre) => {
             return <option value={genre}>{genre}</option>;
           })}
         </select>
         <input type="submit" value="Submit" />
       </form>
-      <p>{loading ? "Loading..." : ""}</p>
-      {randomBook && (
-        <div>
-          <img src={randomBook.bookCover} alt="book cover" />
-          <p>{randomBook.title}</p>
-          <p>{randomBook.author}</p>
-          <p>
-            Description:{" "}
-            {randomBook.description ? randomBook.description : "Not available."}
-          </p>
+
+      {randomBook || loading ? (
+        <div id="random-book">
+          {loading ? (
+            <div class="loading-container">
+              <Loading type="spin" color="black" />
+            </div>
+          ) : null}
+          {randomBook ? (
+            <div>
+              <img src={randomBook.bookCover} alt="book cover" />
+              <h2 className="book-title">{randomBook.title}</h2>
+              <h4 className="book-author">{randomBook.author}</h4>
+              <p>
+                <span className="underline">Description</span>:{" "}
+                {randomBook.description
+                  ? randomBook.description
+                  : "Not available."}
+              </p>
+            </div>
+          ) : null}
         </div>
-      )}
+      ) : null}
     </div>
   );
 }
