@@ -14,14 +14,14 @@ function App() {
     setRandomBook("");
     setLoading(true);
     if (genre === "Any") {
-      fetch("/random")
+      fetch("/random-tbr-book")
         .then((res) => res.json())
         .then((data) => {
           setRandomBook(data);
           setLoading(false);
         });
     } else {
-      fetch(`/random/${genre}`)
+      fetch(`/random-tbr-book/${genre}`)
         .then((res) => res.json())
         .then((data) => {
           setRandomBook(data);
@@ -35,7 +35,7 @@ function App() {
   }
 
   useEffect(() => {
-    fetch("/genres")
+    fetch("/tbr-genres")
       .then((response) => response.json())
       .then((data) => setGenresList(data.genres.sort()));
   }, []);
