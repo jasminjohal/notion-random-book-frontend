@@ -13,6 +13,7 @@ function App() {
     e.preventDefault();
     setRandomBook("");
     setLoading(true);
+    // user didn't select a specific genre
     if (genre === "Any") {
       fetch("/random-tbr-book")
         .then((res) => res.json())
@@ -20,6 +21,7 @@ function App() {
           setRandomBook(data);
           setLoading(false);
         });
+      // user selected a genre from dropdown
     } else {
       fetch(`/random-tbr-book/${genre}`)
         .then((res) => res.json())
@@ -34,6 +36,7 @@ function App() {
     setGenre(e.target.value);
   }
 
+  // update genres dropdown whenever it changes
   useEffect(() => {
     fetch("/tbr-genres")
       .then((response) => response.json())
@@ -44,6 +47,7 @@ function App() {
     <div className="App">
       <h1>Random Book Generator</h1>
 
+      {/* form where user can select from a list of genres */}
       <form onSubmit={handleSubmit}>
         <label>Genre: </label>
         <select onChange={handleChange}>
@@ -62,6 +66,7 @@ function App() {
               <Loading type="spin" color="black" />
             </div>
           ) : null}
+
           {randomBook ? (
             <div>
               <img src={randomBook.bookCover} alt="book cover" />
