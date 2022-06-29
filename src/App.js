@@ -78,6 +78,15 @@ function App() {
                   ? randomBook.description
                   : "Not available."}
               </p>
+              <br></br>
+              <p>
+                <span className="underline">Owned</span>:{" "}
+                {randomBook.ownedFormats.length > 0
+                  ? randomBook.ownedFormats?.map((ownedFormat) => {
+                      return <ul>{ownedFormat}</ul>;
+                    })
+                  : "Not owned."}
+              </p>
             </div>
           ) : null}
         </div>
